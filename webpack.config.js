@@ -7,6 +7,10 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.json$/,
+                type: 'json' // Webpack 5 has built-in JSON handling
+            },
+            {
                 test: /\.ts$/,
                 use: 'ts-loader', // Transpile TypeScript
                 exclude: /node_modules/,
