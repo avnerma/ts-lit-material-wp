@@ -1,4 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
+
 const path = require('path');
 
 module.exports = {
@@ -6,10 +8,6 @@ module.exports = {
     entry: './src/index.ts', // Entry point for TypeScript
     module: {
         rules: [
-            {
-                test: /\.json$/,
-                type: 'json' // Webpack 5 has built-in JSON handling
-            },
             {
                 test: /\.ts$/,
                 use: 'ts-loader', // Transpile TypeScript
@@ -26,9 +24,23 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html', // HTML template
-            inject: true, // Automatically inject bundled JS and CSS into HTML
+            template: './src/index.html', // Base HTML template
+            inject: 'body', // Inject scripts into the body
+            inlineSource: '.(js|css)$', // Inline all JS and CSS files
+            minify: {
+                removeComments: true,
+                // collapseWhitespace: true,
+                // removeRedundantAttributes: true,
+                // useShortDoctype: true,
+                // removeEmptyAttributes: true,
+                // removeStyleLinkTypeAttributes: true,
+                // keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                // minifyURLs: true,
+            },
         }),
+        new HtmlInlineScriptPlugin()
     ],
     output: {
         filename: 'bundle.js', // Webpack output bundle
@@ -41,5 +53,8 @@ module.exports = {
         watchFiles: ['src/**/*.html', 'src/**/*.ts', 'src/**/*.css'], // Watch for file changes
         open: true, // Automatically open the browser
         hot: false, // Disable Hot Module Replacement (HMR)
+        client: {
+            overlay: true, // Show error overlay in the browser
+        }
     },
 };
